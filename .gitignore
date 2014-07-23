@@ -1,0 +1,4 @@
+.bundle/
+shippable/
+coverage/
+.*.swp
