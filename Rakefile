@@ -1,16 +1,20 @@
 require 'rake'
-require 'net/http'
+require 'github_api'
 
-task :trigger_build, [:token, :projects] do |t, args|
-  args[:projects].split(' ').each do |project|
-    uri = URI.parse("https://api.shippable.com/projects/#{project}/build?token=#{args[:token]}")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    response = http.request(Net::HTTP::Post.new(uri.request_uri))
-    code = response.code.to_i
-    if code < 200 and code >= 300
-      puts response.body
-      exit 1
+task :trigger_build, [:repos] do |t, args|
+  repos = Github::Repos.new :oauth_token => ENV['GITHUB_API_KEY']
+
+  args[:repos].split(' ').each do |repo|
+    owner, repo_name = repo.split('/')
+    hooks = repos.hooks.list owner, repo_name
+    shippable_hook = hooks.select { |h| h.config.url and h.config.url.include? 'api.shippable.com' }.first
+    if shippable_hook
+      repos.hooks.test owner, repo_name, shippable_hook.id
+      puts "Triggered Shippable build for project #{repo}"
+    else
+      puts "Project #{repo} does not seem to be configured with Shippable"
     end
   end
 end
+
+task :default

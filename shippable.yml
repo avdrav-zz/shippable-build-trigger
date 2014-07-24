@@ -6,15 +6,14 @@ env:
   global:
     - APP_NAME=immense-castle-7619
     - secure: MRuHkLbL9HPkJPU5lzkKM1+NOq1S5RrhxEyhJkk60xxYiF7DMzydiBN8oFBjWrSmyGeGRuEC22a0I5ItobdWVszfcJCaXHwtfKzfGOUdKuyCnDgvojXhv/jrBvULyLK6zsLw3b8NMxdnwNsHqSPm19qW/EIGEl9Zv/637Igos69z9aT7+xrEG013+6HtKYb8RHm+iPSNsFoBi/RSAHYuM1eLTZWG2WAkjgzZaYmrHCgNwVmk+HOGR+TOWN7Iu5lrjyvC1XDCQrOvo1hZI30cd9OqJ5aadFm3exQpNhI4I7AgOnCbK3NoWNc/GAnqKXCvsaIQ80Jd/uLIOVyMjD6Xmg==
+    - secure: jTIDPlSg0+WiVrEonH/NongiTAn6sqBS1R4BKuJruH5PYHK3XmskZKnjPxXix2S8svULKyAh1xH7QO81dqgDyRjw9iX8K64rMue39E7VuYZKqcsuU62NQulKPB5hSZKtl2XWTkEtulMHcATET6aoj+5kFFl5TY3s87CDLku/fyUUKFcXqkqG68fLz5y6tWHsylVgM/CnjjzvGjMJzUdjJc1MEweu3GWBS3839M5hZ7nCPuUqVFccwHC/yKZNiGFwLh7m7bJgOoL6L3gHBXGqVDNTIPYMrcZt7dlcBjU4bmWWZIoH6RU36IViXsKRvSzMFBbkWgPTkTEf8nAVP5w+eg==
 
 before_install:
   - which heroku || wget -qO- https://toolbelt.heroku.com/install-ubuntu.sh | sh
   - test -f ~/.ssh/id_rsa.heroku || ssh-keygen -y -f ~/.ssh/id_rsa > ~/.ssh/id_rsa.heroku && heroku keys:add ~/.ssh/id_rsa.heroku
   - git remote -v | grep ^heroku || heroku git:remote --app $APP_NAME
 
-script:
-  - echo $SHIPPABLE_API_TOKEN
-
 after_success:
   - heroku addons | grep scheduler:standard || heroku addons:add scheduler
+  - heroku config:set GITHUB_API_KEY=$GITHUB_API_KEY
   - git push -f heroku master
