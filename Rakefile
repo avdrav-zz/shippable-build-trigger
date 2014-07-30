@@ -7,7 +7,7 @@ task :trigger_build, [:repos] do |t, args|
   args[:repos].split(' ').each do |repo|
     owner, repo_name = repo.split('/')
     hooks = repos.hooks.list owner, repo_name
-    shippable_hook = hooks.select { |h| h.config.url and h.config.url.include? 'api.shippable.com' }.first
+    shippable_hook = hooks.select { |h| h.config.url and h.config.url.include? 'shippable.com' }.first
     if shippable_hook
       repos.hooks.test owner, repo_name, shippable_hook.id
       puts "Triggered Shippable build for project #{repo}"
