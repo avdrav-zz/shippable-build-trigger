@@ -16,4 +16,4 @@ before_install:
 after_success:
   - heroku addons | grep scheduler:standard || heroku addons:add scheduler
   - heroku config:set GITHUB_API_KEY=$GITHUB_API_KEY
-  - git push -f heroku master
+  - git push -f heroku $BRANCH:master
